@@ -3,6 +3,8 @@ package com.kshrd.product_orders_mgmt.service.impl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.kshrd.product_orders_mgmt.exception.NotFoundException;
@@ -13,6 +15,7 @@ import com.kshrd.product_orders_mgmt.model.dto.response.PagedResponse;
 import com.kshrd.product_orders_mgmt.model.dto.response.PaginationInfo;
 import com.kshrd.product_orders_mgmt.model.entity.Customer;
 import com.kshrd.product_orders_mgmt.model.entity.CustomerAccount;
+import com.kshrd.product_orders_mgmt.model.enumeration.CustomerProperty;
 import com.kshrd.product_orders_mgmt.repository.CustomerRepository;
 import com.kshrd.product_orders_mgmt.service.CustomerService;
 
@@ -66,8 +69,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public PagedResponse<CustomerResponse> findAll(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+    public PagedResponse<CustomerResponse> findAll(Integer page, Integer size, CustomerProperty customerProperty,
+            Direction direction) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, customerProperty.getValue()));
         Page<Customer> customerPage = customerRepository.findAll(pageable);
         return PagedResponse.<CustomerResponse>builder()
                 .items(customerPage.getContent().stream().map(Customer::toResponse).toList())

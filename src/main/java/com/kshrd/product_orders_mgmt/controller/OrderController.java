@@ -63,8 +63,11 @@ public class OrderController {
             @RequestParam(defaultValue = "ASC") Direction direction) {
         PagedResponse<OrderResponse> orderResponses = orderService.findByCustomerId(customerId, page, size,
                 orderProperty, direction);
-        return ResponseUtils.createResponse("Fetch Orders for customer with ID: " + customerId + " successfully",
-                HttpStatus.OK, orderResponses);
+        String message = "Fetch Orders for customer with ID: " + customerId + " successfully";
+        if (orderResponses.getItems().isEmpty()) {
+            message = "No Record Found";
+        }
+        return ResponseUtils.createResponse(message, HttpStatus.OK, orderResponses);
     }
 
     @PutMapping("/{order-id}/status")

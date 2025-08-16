@@ -7,6 +7,7 @@ import com.kshrd.product_orders_mgmt.model.dto.request.ProductRequest;
 import com.kshrd.product_orders_mgmt.model.dto.response.ApiResponse;
 import com.kshrd.product_orders_mgmt.model.dto.response.PagedResponse;
 import com.kshrd.product_orders_mgmt.model.dto.response.ProductResponse;
+import com.kshrd.product_orders_mgmt.model.enumeration.ProductProperty;
 import com.kshrd.product_orders_mgmt.service.ProductService;
 import com.kshrd.product_orders_mgmt.utils.ResponseUtils;
 
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -68,9 +70,12 @@ public class ProductController {
     @Operation(summary = "Get paginated list of products", description = "Retrieves a list of products in paginated format. You can specify the page number, page size, sorting property (from ```ProductProperty``` enum), and sort direction.")
     public ResponseEntity<ApiResponse<PagedResponse<ProductResponse>>> getAllProducts(
             @RequestParam(defaultValue = "1") @Positive Integer page,
-            @RequestParam(defaultValue = "10") @Positive Integer size) {
+            @RequestParam(defaultValue = "10") @Positive Integer size,
+            @RequestParam(defaultValue = "ID") ProductProperty productProperty,
+            @RequestParam(defaultValue = "ASC") Direction direction) {
 
-        PagedResponse<ProductResponse> pagedResponse = productService.getAllProducts(page, size);
+        PagedResponse<ProductResponse> pagedResponse = productService.getAllProducts(page, size, productProperty,
+                direction);
         String message = "Fetched all products successfully";
         if (pagedResponse.getItems().isEmpty()) {
             message = "No Record Found";

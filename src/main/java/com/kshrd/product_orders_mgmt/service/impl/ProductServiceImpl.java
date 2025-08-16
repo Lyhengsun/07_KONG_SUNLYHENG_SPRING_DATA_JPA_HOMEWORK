@@ -3,6 +3,8 @@ package com.kshrd.product_orders_mgmt.service.impl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.kshrd.product_orders_mgmt.exception.NotFoundException;
@@ -11,6 +13,7 @@ import com.kshrd.product_orders_mgmt.model.dto.response.PagedResponse;
 import com.kshrd.product_orders_mgmt.model.dto.response.PaginationInfo;
 import com.kshrd.product_orders_mgmt.model.dto.response.ProductResponse;
 import com.kshrd.product_orders_mgmt.model.entity.Product;
+import com.kshrd.product_orders_mgmt.model.enumeration.ProductProperty;
 import com.kshrd.product_orders_mgmt.repository.ProductRepository;
 import com.kshrd.product_orders_mgmt.service.ProductService;
 
@@ -55,8 +58,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PagedResponse<ProductResponse> getAllProducts(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+    public PagedResponse<ProductResponse> getAllProducts(Integer page, Integer size, ProductProperty productProperty,
+            Direction direction) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, productProperty.getValue()));
         Page<Product> productPage = productRepository.findAll(pageable);
         return PagedResponse.<ProductResponse>builder()
                 .items(productPage.getContent().stream().map(Product::toResponse).toList())

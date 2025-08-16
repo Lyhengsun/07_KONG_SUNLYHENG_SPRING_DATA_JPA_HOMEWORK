@@ -1,8 +1,11 @@
 package com.kshrd.product_orders_mgmt.service;
 
+import org.springframework.data.domain.Sort.Direction;
+
 import com.kshrd.product_orders_mgmt.model.dto.request.CustomerRequest;
 import com.kshrd.product_orders_mgmt.model.dto.response.CustomerResponse;
 import com.kshrd.product_orders_mgmt.model.dto.response.PagedResponse;
+import com.kshrd.product_orders_mgmt.model.enumeration.CustomerProperty;
 
 public interface CustomerService {
 
@@ -14,6 +17,7 @@ public interface CustomerService {
 
     CustomerResponse delete(Long customerId);
 
-    PagedResponse<CustomerResponse> findAll(Integer page, Integer size);
-    
+    PagedResponse<CustomerResponse> findAll(Integer page, Integer size, CustomerProperty customerProperty,
+            Direction direction);
+
 }

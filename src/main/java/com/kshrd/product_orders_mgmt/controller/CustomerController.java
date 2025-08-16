@@ -1,5 +1,6 @@
 package com.kshrd.product_orders_mgmt.controller;
 
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +17,7 @@ import com.kshrd.product_orders_mgmt.model.dto.request.CustomerRequest;
 import com.kshrd.product_orders_mgmt.model.dto.response.ApiResponse;
 import com.kshrd.product_orders_mgmt.model.dto.response.CustomerResponse;
 import com.kshrd.product_orders_mgmt.model.dto.response.PagedResponse;
+import com.kshrd.product_orders_mgmt.model.enumeration.CustomerProperty;
 import com.kshrd.product_orders_mgmt.service.CustomerService;
 import com.kshrd.product_orders_mgmt.utils.ResponseUtils;
 
@@ -33,7 +35,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping("/{customer-id}")
-    @Operation(summary = "Get customer by ID", description =  "Fetches detailed information about a single customer using the provided customer ID.")
+    @Operation(summary = "Get customer by ID", description = "Fetches detailed information about a single customer using the provided customer ID.")
     public ResponseEntity<ApiResponse<CustomerResponse>> getCustomerById(@PathVariable("customer-id") Long customerId) {
         CustomerResponse customer = customerService.findById(customerId);
         return ResponseUtils.createResponse("Fetch Customer with ID: " + customerId + " successfully", HttpStatus.FOUND,
@@ -68,8 +70,11 @@ public class CustomerController {
     @Operation(summary = "Get paginated list of customers", description = "Retrieves all customers in a paginated format. You can specify the page number, page size, sorting property, and sort direction.")
     public ResponseEntity<ApiResponse<PagedResponse<CustomerResponse>>> getAllCustomers(
             @RequestParam(defaultValue = "1") @Positive Integer page,
-            @RequestParam(defaultValue = "10") @Positive Integer size) {
-        PagedResponse<CustomerResponse> pagedResponse = customerService.findAll(page, size);
+            @RequestParam(defaultValue = "10") @Positive Integer size,
+            @RequestParam(defaultValue = "ID") CustomerProperty customerProperty,
+            @RequestParam(defaultValue = "ASC") Direction direction) {
+        PagedResponse<CustomerResponse> pagedResponse = customerService.findAll(page, size, customerProperty,
+                direction);
         String message = "Fetch all customer successfully";
         if (pagedResponse.getItems().isEmpty()) {
             message = "No Record Found";
