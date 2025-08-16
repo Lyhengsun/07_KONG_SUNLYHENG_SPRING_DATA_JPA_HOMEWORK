@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:14.18
+    container_name: product-orders-mgmt-db-container
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2003 
+    ports:
+      - 5433:5432
+    volumes:
+      - "product_orders_mgmt_data:/var/lib/postgresql/data"
+    networks:
+      - product_orders_mgmt_network
+  
+  # backend:
+  #   build: .
+  #   container_name: product-orders-mgmt-container
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:postgresql://product-orders-mgmt-db-container:5432/postgres
+  #     SPRING_DATASOURCE_USERNAME: postgres
+  #     SPRING_DATASOURCE_PASSWORD: 2003
+  #   ports:
+  #     - 8081:8090
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - product_orders_mgmt_network
+
+networks:
+  product_orders_mgmt_network:
+    driver: bridge
+
+volumes:
+  product_orders_mgmt_data:
